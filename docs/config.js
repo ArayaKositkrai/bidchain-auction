@@ -1,7 +1,7 @@
 // ตั้งค่าหน้าเว็บ — scripts/deploy.js จะอัปเดต CONTRACT_ADDRESS / CHAIN_ID / DEPLOY_BLOCK ให้อัตโนมัติ
 // ถ้า deploy ผ่าน Remix ให้แก้ค่าเหล่านี้เอง
 window.APP_CONFIG = {
-  CONTRACT_ADDRESS: "0xa589c9e4B9Ff50FfAc675329a0c88F98977bDA3a",
+  CONTRACT_ADDRESS: "0x29eb566f11c30e918FcE9aa81c1a786C6568004c",
   CHAIN_ID: 11155111, // 11155111 = Sepolia, 31337 = Hardhat local
   DEPLOY_BLOCK: 12139740, // block ที่ deploy (ช่วยให้โหลดประวัติเร็วขึ้น)
   NETWORKS: {

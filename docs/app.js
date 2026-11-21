@@ -105,7 +105,8 @@
   // ---------- wallet ----------
   async function connect() {
     if (!window.ethereum) return toast('ไม่พบ MetaMask — ติดตั้งได้ที่ <a href="https://metamask.io/download/" target="_blank">metamask.io</a>', "err");
-    try { await window.ethereum.request({ method: "eth_requestAccounts" }); await ensureNetwork(); await setupWallet(); }
+    // wallet_requestPermissions เปิดหน้าเลือกบัญชีทุกครั้ง (eth_requestAccounts จะคืนบัญชีเดิมเงียบ ๆ ถ้าเคยเชื่อมแล้ว)
+    try { await window.ethereum.request({ method: "wallet_requestPermissions", params: [{ eth_accounts: {} }] }); await ensureNetwork(); await setupWallet(); }
     catch (e) { toast("เชื่อมต่อไม่สำเร็จ: " + esc(errMsg(e)), "err"); }
   }
   async function ensureNetwork() {
@@ -318,7 +319,7 @@
         </form>`;
       }
       if (v.key === "live" && isSeller && a.bidCount === 0) act += `<button class="btn" data-act="cancel">ยกเลิกการประมูล</button>`;
-      if (a.status === ST.Live && t >= a.endTime) act += `<button class="btn ink" data-act="finalize">ปิดประมูล</button>`;
+      if (a.status === ST.Live && t >= a.endTime && (same(a.seller, me) || t >= a.endTime + 86400)) act += `<button class="btn ink" data-act="finalize">ปิดประมูล</button>`;
       if (a.status === ST.AwaitingPayment && isLead && t <= a.paymentDeadline) act += `<button class="btn red big" data-act="pay">ชำระส่วนที่เหลือ ${eth(a.highestBid - a.deposit)}</button>`;
       if (a.status === ST.AwaitingPayment && t > a.paymentDeadline) act += `<button class="btn ink" data-act="forfeit">ยึดมัดจำให้ผู้ขาย</button>`;
     } else if (v.key === "live") {

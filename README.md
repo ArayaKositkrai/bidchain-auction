@@ -10,10 +10,10 @@ BidChain Gallery จัดประมูลงานศิลปะและส
 
 | รายการ | ค่า |
 |---|---|
-| Contract Address (Sepolia) | `0xa589c9e4B9Ff50FfAc675329a0c88F98977bDA3a` |
+| Contract Address (Sepolia) | `0x29eb566f11c30e918FcE9aa81c1a786C6568004c` |
 | GitHub Pages | https://arayakositkrai.github.io/bidchain-auction/ |
 | GitHub Repository | https://github.com/ArayaKositkrai/bidchain-auction |
-| ดู Contract บน Etherscan | https://sepolia.etherscan.io/address/0xa589c9e4B9Ff50FfAc675329a0c88F98977bDA3a |
+| ดู Contract บน Etherscan | https://sepolia.etherscan.io/address/0x29eb566f11c30e918FcE9aa81c1a786C6568004c |
 
 ---
 
@@ -37,7 +37,7 @@ BidChain Gallery จัดประมูลงานศิลปะและส
 | 2 | วางราคาประมูล | `placeBid(id, amount)` payable — แนบมัดจำพอดี ราคาต้อง ≥ ราคาสูงสุด + ขั้นต่ำ | ฟอร์มเสนอราคาในหน้ารายละเอียด Lot |
 | 3 | บันทึกเงินคืนผู้ถูกแซง | ทำใน `placeBid` → `pendingWithdrawals[ผู้ถูกแซง] += deposit` + event `OutbidCredited` | แจ้งยอดคืนที่เมนู "กระเป๋าของฉัน" |
 | 4 | ถอนเงินคืน | `withdraw()` — pull payment ถอนได้ตลอดเวลา | ปุ่ม "ถอนเงินคืน" |
-| 5 | ปิดประมูล | `finalize(id)` — ใครก็ได้เรียกเมื่อหมดเวลา ตรวจ Reserve | ปุ่ม "ปิดประมูล" (ขึ้นเมื่อหมดเวลา) |
+| 5 | ปิดประมูล | `finalize(id)` — ผู้ขายเรียกได้เมื่อหมดเวลา (ถ้าผู้ขายไม่ปิดภายใน 1 วัน ใครก็ปิดแทนได้) ตรวจ Reserve | ปุ่ม "ปิดประมูล" (ขึ้นให้ผู้ขายเมื่อหมดเวลา) |
 | 6 | จ่ายเงิน/หักค่าธรรมเนียม | `completePayment(id)` (ถึง Reserve) / คืนมัดจำอัตโนมัติ (ไม่ถึง) / `claimForfeit(id)` (ผิดนัด) | ปุ่ม "ชำระส่วนที่เหลือ" / "ยึดมัดจำให้ผู้ขาย" |
 | 7 | Auction Dashboard | `getAuction`, `getBids`, `remainingDue` + events | หน้าคอลเลกชัน (ราคาสูงสุด, นับถอยหลัง, สถานะ Reserve), ประวัติการเสนอราคา, "บันทึกธุรกรรม" พร้อม Tx Hash |
 
@@ -114,7 +114,7 @@ npx hardhat test              # รัน unit tests
 1. **บัญชี A (ผู้ขาย)** — แท็บ "ฝากขาย" ตั้งราคา/มัดจำ/เวลาปิด (ลองตั้งให้ปิดใน 2–3 นาที)
 2. **บัญชี B** — เปิด Lot แล้วเสนอราคา (MetaMask จะขอโอนมัดจำ)
 3. **บัญชี C** — เสนอราคาสูงกว่า → บัญชี B เห็นยอดคืนที่ "กระเป๋าของฉัน" กดถอนได้ทันที
-4. หมดเวลา → ใครก็ได้กด "ปิดประมูล" → ผู้ชนะกด "ชำระส่วนที่เหลือ" → ผู้ขายถอนรายได้ (หัก 2.5%)
+4. หมดเวลา → ผู้ขายกด "ปิดประมูล" → ผู้ชนะกด "ชำระส่วนที่เหลือ" → ผู้ขายถอนรายได้ (หัก 2.5%)
 5. ถ้าผู้ชนะไม่ชำระจนเลยกำหนด → กด "ยึดมัดจำให้ผู้ขาย"
 6. ดูทุกธุรกรรมได้ที่ "บันทึกธุรกรรม" (มี Tx Hash ลิงก์ Etherscan)
 

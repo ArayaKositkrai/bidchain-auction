@@ -79,6 +79,7 @@ contract BidChainAuction {
     mapping(uint256 => Auction) private auctions;
     mapping(uint256 => Bid[]) private bidHistory;
     mapping(address => uint256) public pendingWithdrawals;
+    uint256 public constant FINALIZE_GRACE = 1 days;
 
     uint256 private locked = 1;
 
@@ -228,6 +229,8 @@ contract BidChainAuction {
     // ------------------------------------------------------------------
     function finalize(uint256 id) external auctionExists(id) {
         Auction storage a = auctions[id];
+        // ผู้ขายปิดได้ทันทีที่หมดเวลา; ถ้าผู้ขายเงียบเกิน 1 วัน ใครก็ปิดได้ กันมัดจำผู้นำค้างตลอดไป
+        require(msg.sender == a.seller || block.timestamp >= a.endTime + FINALIZE_GRACE, "Only seller");
         require(a.status == Status.Live, "Already finalized");
         require(block.timestamp >= a.endTime, "Auction not ended");
 

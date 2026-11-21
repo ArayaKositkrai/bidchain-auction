@@ -83,11 +83,12 @@ describe("BidChainAuction", function () {
     const id = await newAuction();
     await c.connect(alice).placeBid(id, E("1"), { value: E("0.2") });
     await c.connect(bob).placeBid(id, E("2.5"), { value: E("0.2") });
-    await expect(c.connect(carol).finalize(id)).to.be.revertedWith("Auction not ended");
+    await expect(c.connect(seller).finalize(id)).to.be.revertedWith("Auction not ended");
     await time.increase(DAY);
     await expect(c.connect(bob).placeBid(id, E("3"))).to.be.revertedWith("Auction ended");
-    await expect(c.connect(carol).finalize(id)).to.emit(c, "AuctionFinalized"); // ใครก็ได้เรียกปิด
-    await expect(c.connect(carol).finalize(id)).to.be.revertedWith("Already finalized");
+    await expect(c.connect(carol).finalize(id)).to.be.revertedWith("Only seller");
+    await expect(c.connect(seller).finalize(id)).to.emit(c, "AuctionFinalized"); // เฉพาะผู้ขายปิดได้
+    await expect(c.connect(seller).finalize(id)).to.be.revertedWith("Already finalized");
     expect(await c.remainingDue(id)).to.equal(E("2.3"));
     await expect(c.connect(alice).completePayment(id, { value: E("2.3") })).to.be.revertedWith("Only winner");
     await expect(c.connect(bob).completePayment(id, { value: E("2.5") })).to.be.revertedWith("Must pay exact remaining amount");
@@ -104,7 +105,7 @@ describe("BidChainAuction", function () {
     const id = await newAuction();
     await c.connect(alice).placeBid(id, E("1.5"), { value: E("0.2") });
     await time.increase(DAY);
-    await c.finalize(id);
+    await c.connect(seller).finalize(id);
     expect((await c.getAuction(id)).status).to.equal(S.ReserveNotMet);
     expect(await c.pendingWithdrawals(alice.address)).to.equal(E("0.2"));
     expect(await c.feesAccrued()).to.equal(0);
@@ -116,7 +117,7 @@ describe("BidChainAuction", function () {
     const id = await newAuction({ win: 3600 });
     await c.connect(alice).placeBid(id, E("2"), { value: E("0.2") });
     await time.increase(DAY);
-    await c.finalize(id);
+    await c.connect(seller).finalize(id);
     await expect(c.claimForfeit(id)).to.be.revertedWith("Payment window still open");
     await time.increase(3601);
     await expect(c.connect(alice).completePayment(id, { value: E("1.8") })).to.be.revertedWith("Payment deadline passed");
@@ -145,7 +146,7 @@ describe("BidChainAuction", function () {
     await expect(evil.tryWithdraw(await c.getAddress())).to.be.revertedWith("Transfer failed"); // เสียหายแค่ตัวเอง
     expect(await c.pendingWithdrawals(await evil.getAddress())).to.equal(E("0.2")); // ยอดยังอยู่ ไม่หาย
     await time.increase(DAY);
-    await c.finalize(id);
+    await c.connect(seller).finalize(id);
     expect((await c.getAuction(id)).status).to.equal(S.ReserveNotMet);
     await expect(c.connect(alice).withdraw()).to.changeEtherBalance(alice, E("0.2"));
   });
@@ -153,7 +154,9 @@ describe("BidChainAuction", function () {
   it("ไม่มีผู้ประมูล → NoBids, ยกเลิกได้เฉพาะก่อนมีผู้ประมูล, ปฏิเสธ ETH ที่โอนตรง", async () => {
     const id1 = await newAuction();
     await time.increase(DAY);
-    await c.finalize(id1);
+    await expect(c.connect(carol).finalize(id1)).to.be.revertedWith("Only seller");
+    await time.increase(DAY); // ผู้ขายไม่ปิดเกิน 1 วัน → คนอื่นปิดแทนได้
+    await c.connect(carol).finalize(id1);
     expect((await c.getAuction(id1)).status).to.equal(S.NoBids);
     const id2 = await newAuction();
     await expect(c.connect(alice).cancelAuction(id2)).to.be.revertedWith("Only seller");
@@ -182,7 +185,7 @@ describe("BidChainAuction", function () {
     const actors = [platform, seller, alice, bob, carol];
     await expectBalanced(actors);
     await time.increase(DAY);
-    await c.finalize(a1); await c.finalize(a2); await c.finalize(a3);
+    await c.connect(seller).finalize(a1); await c.connect(seller).finalize(a2); await c.connect(seller).finalize(a3);
     await expectBalanced(actors);
     await c.connect(carol).completePayment(a1, { value: E("2") });
     await time.increase(3601);
