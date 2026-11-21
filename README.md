@@ -10,10 +10,10 @@ BidChain Gallery จัดประมูลงานศิลปะและส
 
 | รายการ | ค่า |
 |---|---|
-| Contract Address (Sepolia) | `0x29eb566f11c30e918FcE9aa81c1a786C6568004c` |
+| Contract Address (Sepolia) | `0x1De8b42f3cb63Ce383F16Cd4229Cd1679C686dc4` |
 | GitHub Pages | https://arayakositkrai.github.io/bidchain-auction/ |
 | GitHub Repository | https://github.com/ArayaKositkrai/bidchain-auction |
-| ดู Contract บน Etherscan | https://sepolia.etherscan.io/address/0x29eb566f11c30e918FcE9aa81c1a786C6568004c |
+| ดู Contract บน Etherscan | https://sepolia.etherscan.io/address/0x1De8b42f3cb63Ce383F16Cd4229Cd1679C686dc4 |
 
 ---
 
@@ -58,6 +58,7 @@ Live ──finalize──▶ AwaitingPayment ──completePayment──▶ Sett
 | กฎ | วิธีบังคับใช้ |
 |---|---|
 | ผู้ขายห้ามประมูลสินค้าตนเอง | `require(msg.sender != a.seller)` ใน `placeBid` |
+| กันประมูลวินาทีสุดท้าย (sniping) | bid ที่เข้ามาตอนเหลือไม่ถึง 60 วิ → ต่อ `endTime` ให้เหลือ 60 วิ (`EXTEND_WINDOW`) |
 | ผู้ชนะห้ามถอนเงินคืน | มัดจำของผู้นำ **ไม่เคยถูกบันทึกเป็นยอดถอน** จะถูกบันทึกก็ต่อเมื่อถูกแซง / ไม่ถึง Reserve เท่านั้น |
 | ปิดประมูลและจ่ายเงินได้ครั้งเดียว | ทุกฟังก์ชันตรวจสถานะก่อน แล้วเปลี่ยนสถานะทันที (`Already finalized`, `Not awaiting payment`) |
 | เงินของผู้ประมูลคนหนึ่งต้องไม่ถูกขัดขวางโดยอีกคน | **Pull payment** — ไม่มีการโอนเงินออกระหว่างประมูลเลย มีแค่บันทึกยอด แต่ละคนถอนเอง (มี test ใช้ wallet ที่ปฏิเสธรับเงินพิสูจน์) |

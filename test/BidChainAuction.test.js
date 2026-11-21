@@ -165,7 +165,25 @@ describe("BidChainAuction", function () {
     const id3 = await newAuction();
     await c.connect(alice).placeBid(id3, E("1"), { value: E("0.2") });
     await expect(c.connect(seller).cancelAuction(id3)).to.be.revertedWith("Already has bids");
+    const id4 = await newAuction();
+    await time.increase(DAY * 2); // เลยเวลาปิด + grace ของ finalize แล้ว คนอื่นก็ยังยกเลิกไม่ได้
+    await expect(c.connect(alice).cancelAuction(id4)).to.be.revertedWith("Only seller");
     await expect(alice.sendTransaction({ to: await c.getAddress(), value: 1 })).to.be.revertedWith("Use placeBid()");
+  });
+
+  it("bid ในนาทีสุดท้ายต่อเวลาให้เหลือ 60 วิ, bid ก่อนหน้านั้นไม่ต่อ", async () => {
+    const id = await newAuction();
+    const end0 = (await c.getAuction(id)).endTime;
+    await c.connect(alice).placeBid(id, E("1"), { value: E("0.2") });
+    expect((await c.getAuction(id)).endTime).to.equal(end0); // ยังไม่ถึงนาทีสุดท้าย
+    await time.increaseTo(end0 - 10n);
+    await c.connect(bob).placeBid(id, E("1.1"), { value: E("0.2") });
+    const end1 = (await c.getAuction(id)).endTime;
+    expect(end1).to.equal(BigInt(await time.latest()) + 60n);
+    await time.increaseTo(end0 + 5n); // เลยเวลาเดิมแล้วแต่ยังประมูลได้
+    await c.connect(alice).placeBid(id, E("1.2"), { value: E("0.2") });
+    await time.increaseTo((await c.getAuction(id)).endTime);
+    await expect(c.connect(bob).placeBid(id, E("1.3"), { value: E("0.2") })).to.be.revertedWith("Auction ended");
   });
 
   it("ผู้ถอนค่าธรรมเนียมได้เฉพาะ owner", async () => {

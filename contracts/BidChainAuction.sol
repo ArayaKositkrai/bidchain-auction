@@ -80,6 +80,7 @@ contract BidChainAuction {
     mapping(uint256 => Bid[]) private bidHistory;
     mapping(address => uint256) public pendingWithdrawals;
     uint256 public constant FINALIZE_GRACE = 1 days;
+    uint256 public constant EXTEND_WINDOW = 60; // bid ในนาทีสุดท้าย → ต่อเวลาให้เหลือ 60 วิ (กัน sniping)
 
     uint256 private locked = 1;
 
@@ -208,6 +209,7 @@ contract BidChainAuction {
         a.highestBid = amount;
         a.bidCount += 1;
         bidHistory[id].push(Bid(msg.sender, amount, block.timestamp));
+        if (a.endTime - block.timestamp < EXTEND_WINDOW) a.endTime = block.timestamp + EXTEND_WINDOW;
 
         emit BidPlaced(id, msg.sender, amount, depositPaid);
     }

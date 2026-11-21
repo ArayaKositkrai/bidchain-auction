@@ -433,6 +433,9 @@
     const t = now();
     $$("[data-end]").forEach((el) => { el.textContent = countdown(Number(el.dataset.end) - t); });
   }
+  // ดึงข้อมูลใหม่ทุก 15 วิ ให้เห็น bid ของคนอื่นและเวลาที่ถูกต่อ (ข้ามตอนกำลังพิมพ์ จะได้ไม่ล้างช่องราคา)
+  // shortcut: refresh โหลด event ทั้งหมดใหม่ทุกรอบ, ถ้า RPC ช้า/โดนจำกัดให้เปลี่ยนเป็นโหลดเฉพาะ block ใหม่
+  setInterval(() => { if (!document.activeElement?.matches("input, textarea, select")) refresh(); }, 15000);
   let lastKeys = "";
   setInterval(() => {
     tick();
