@@ -88,6 +88,7 @@ em { font-family: var(--display); font-style: italic; font-weight: 400; }
 .chips { display: flex; gap: 8px; flex-wrap: wrap; }
 .chip { font: inherit; font-size: 13px; padding: 6px 14px; border: 1px solid var(--line); background: transparent; border-radius: 99px; cursor: pointer; color: var(--ink-2); }
 .chip.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.chip b { font-weight: 600; margin-left: 4px; opacity: .75; }
 
 /* ---------- lots ---------- */
 .lots { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 56px 40px; }

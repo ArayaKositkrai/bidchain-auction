@@ -210,7 +210,9 @@
     $("#heroArt").dataset.id = hero ? hero.id : "";
 
     const f = state.filter;
-    const shown = A.filter((a) => f === "all" || view(a).key === f);
+    // ปุ่มกรองตามสถานะใน contract ทั้ง 7 แบบ (data-f = เลข Status) พร้อมจำนวน
+    $$("#filters .chip").forEach((b) => { b.querySelector("b").textContent = b.dataset.f === "all" ? A.length : A.filter((a) => a.status === Number(b.dataset.f)).length; });
+    const shown = A.filter((a) => f === "all" || a.status === Number(f));
     $("#lots").innerHTML = shown.length ? shown.map(lotCard).join("") : `<div class="empty">ยังไม่มีผลงานในหมวดนี้</div>`;
 
     const isOwner = same(state.owner, state.account);

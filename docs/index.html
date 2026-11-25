@@ -48,10 +48,14 @@
     <div class="section-head">
       <h2><em>The</em> Collection</h2>
       <div class="chips" id="filters">
-        <button class="chip active" data-f="all">ทั้งหมด</button>
-        <button class="chip" data-f="live">กำลังประมูล</button>
-        <button class="chip" data-f="pending">รอปิด / รอชำระ</button>
-        <button class="chip" data-f="closed">ปิดแล้ว</button>
+        <button class="chip active" data-f="all">ทั้งหมด <b></b></button>
+        <button class="chip" data-f="0">Live · กำลังประมูล <b></b></button>
+        <button class="chip" data-f="1">AwaitingPayment · รอชำระ <b></b></button>
+        <button class="chip" data-f="2">Settled · ขายแล้ว <b></b></button>
+        <button class="chip" data-f="3">ReserveNotMet · ไม่ถึง Reserve <b></b></button>
+        <button class="chip" data-f="4">NoBids · ไม่มีผู้ประมูล <b></b></button>
+        <button class="chip" data-f="5">Defaulted · ยึดมัดจำ <b></b></button>
+        <button class="chip" data-f="6">Cancelled · ยกเลิก <b></b></button>
       </div>
     </div>
     <div class="lots" id="lots"></div>
