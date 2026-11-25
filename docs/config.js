@@ -3,9 +3,9 @@
 window.APP_CONFIG = {
   CONTRACT_ADDRESS: "0x1De8b42f3cb63Ce383F16Cd4229Cd1679C686dc4",
   CHAIN_ID: 11155111, // 11155111 = Sepolia, 31337 = Hardhat local
-  DEPLOY_BLOCK: 12139740, // block ที่ deploy (ช่วยให้โหลดประวัติเร็วขึ้น)
+  DEPLOY_BLOCK: 12182530, // block ที่ deploy (ช่วยให้โหลดประวัติเร็วขึ้น)
   NETWORKS: {
-    11155111: { name: "Sepolia", rpc: "https://ethereum-sepolia-rpc.publicnode.com", explorer: "https://sepolia.etherscan.io", symbol: "SepoliaETH" },
+    11155111: { name: "Sepolia", rpc: "https://sepolia.gateway.tenderly.co", explorer: "https://sepolia.etherscan.io", symbol: "SepoliaETH" },
     31337: { name: "Hardhat Local", rpc: "http://127.0.0.1:8545", explorer: "", symbol: "ETH" },
   },
 };
